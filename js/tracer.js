@@ -10,7 +10,7 @@ const {OTLPTraceExporter} = require('@opentelemetry/exporter-trace-otlp-proto');
 
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: "client",
+    [SemanticResourceAttributes.SERVICE_NAME]: "js-client",
   })
 
 });
