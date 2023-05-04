@@ -1,4 +1,5 @@
-Multi-language examples for flagd simple feature flag evaluations with distributed tracing.
+Multi-language examples for [flagd](https://github.com/open-feature/flagd) simple feature flag evaluations with 
+distributed tracing.
 
 ### Requirements
 
@@ -9,6 +10,6 @@ Multi-language examples for flagd simple feature flag evaluations with distribut
 
 ### How to run
 
-- Start flagd & OpenTelemetry docker setup
-- Run individual language examples 
-- Observe traces in Jaeger & metrics in Prometheus
+- Start flagd & OpenTelemetry docker setup (see [docker](../docker))
+- Run individual language examples (ex:- for go example, `go run main.go`)
+- Observe traces in Jaeger(http://127.0.0.1:16686) & metrics in Prometheus(http://localhost:9090)

@@ -2,8 +2,12 @@ A self-contained docker setup to up and run flagd & OpenTelemetry collector (Jae
 
 This work is adopted from official [OTEL collector example](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/examples/demo)
 
-To start - `docker-compose up`
-To clean-up - `docker-compose down`
+A flagd feature flag definition is located at [flags](./flags)
+
+### How to run
+
+- To start - `docker-compose up`
+- To clean-up - `docker-compose down`
 
 ### Accessing deployments 
 
