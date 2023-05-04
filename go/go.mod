@@ -1,6 +1,6 @@
 module fftest
 
-go 1.20
+go 1.18
 
 require (
 	github.com/open-feature/go-sdk v1.3.0

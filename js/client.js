@@ -3,24 +3,26 @@ const {OpenFeature} = require('@openfeature/js-sdk');
 const {FlagdProvider} = require('@openfeature/flagd-provider');
 const {api} = require("@opentelemetry/sdk-node");
 
+const flagkey = "myBoolFlag"
+
 OpenFeature.setProvider(new FlagdProvider());
 
 // simple flag eval
 async function evalFlags() {
-    let tracer = api.trace.getTracer("simple-trace");
-    const span = tracer.startSpan('client.js:main()');
+    const tracer = api.trace.getTracer("flag-eval");
+
+    const span = tracer.startSpan('eval-flag');
 
     const client = OpenFeature.getClient();
-
-    const decision = await client.getBooleanValue("myBoolFlag", false);
-    console.log(decision)
+    const decision = await client.getBooleanValue(flagkey, false);
+    console.log("flag decision: " + decision)
 
     span.end()
 }
 
 evalFlags()
-
+// wait for exporting to complete
 setTimeout(() => {
-    console.log('Completed.');
+    console.log('complete');
 }, 10000)
 

@@ -17,27 +17,30 @@ import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 import java.time.Duration;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
-        //OpenTelemetrySdk telemetrySdk = setupTelemetry("java-manual-telemetry");
+    private static final String FLAG_KEY = "myBoolFlag";
+    private static final String SERVICE = "java-flagd-telemetry";
 
-        FlagdProvider flagdProvider =
-                new FlagdProvider(FlagdOptions.builder().build());
+    public static void main(String[] args) throws InterruptedException {
+        final OpenTelemetrySdk telemetrySdk = setupTelemetry(SERVICE);
+
+        // flagd provider with telemetry option
+        final FlagdProvider flagdProvider = new FlagdProvider(FlagdOptions.builder().openTelemetry(telemetrySdk).build());
 
         OpenFeatureAPI api = OpenFeatureAPI.getInstance();
         api.setProvider(flagdProvider);
-        Client client = api.getClient();
 
-        for (int i = 0; i < 2; i++) {
-            final Boolean boolEval = client.getBooleanValue("myBoolFlag", false);
-            System.out.println("eval: " + boolEval);
+        final Client client = api.getClient();
 
-            Thread.sleep(1000);
-        }
+        // flag evaluation
+        final Boolean boolEval = client.getBooleanValue(FLAG_KEY, false);
+        System.out.println("eval: " + boolEval);
 
+        // wait to export everything
         Thread.sleep(5000);
     }
 
 
+    // OTEL setup
     private static OpenTelemetrySdk setupTelemetry(String appName) {
         Resource resource = Resource.getDefault()
                 .merge(Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, appName)));
@@ -48,7 +51,8 @@ public class Main {
         SdkTracerProvider sdkTracerProvider = SdkTracerProvider
                 .builder()
                 .addSpanProcessor(BatchSpanProcessor.builder(otlpGrpcSpanExporter).build())
-                .setResource(resource).build();
+                .setResource(resource)
+                .build();
 
      return OpenTelemetrySdk.builder()
                 .setTracerProvider(sdkTracerProvider)

@@ -10,7 +10,7 @@ const {OTLPTraceExporter} = require('@opentelemetry/exporter-trace-otlp-proto');
 
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: "js-client",
+    [SemanticResourceAttributes.SERVICE_NAME]: "js-flagd-telemetry",
   })
 
 });
@@ -18,7 +18,6 @@ const provider = new NodeTracerProvider({
 registerInstrumentations({
   instrumentations: [new GrpcInstrumentation()],
 });
-
 
 provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter({})));
 
