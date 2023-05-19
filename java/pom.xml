@@ -40,6 +40,12 @@
             <version>0.5.9</version>
         </dependency>
 
+        <dependency>
+            <groupId>dev.openfeature.contrib.hooks</groupId>
+            <artifactId>otel</artifactId>
+            <version>1.0.3-snapshot</version>
+        </dependency>
+
 
         <dependency>
             <groupId>io.opentelemetry</groupId>

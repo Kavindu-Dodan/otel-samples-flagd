@@ -1,11 +1,18 @@
 package org.example;
 
+import dev.openfeature.contrib.hooks.otel.OpenTelemetryHook;
+import dev.openfeature.contrib.hooks.otel.OpenTelemetryHookOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
+import dev.openfeature.sdk.FlagEvaluationDetails;
 import dev.openfeature.sdk.OpenFeatureAPI;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -21,22 +28,34 @@ public class Main {
     private static final String SERVICE = "java-flagd-telemetry";
 
     public static void main(String[] args) throws InterruptedException {
-        final OpenTelemetrySdk telemetrySdk = setupTelemetry(SERVICE);
+        final OpenTelemetry openTelemetry = setupTelemetry(SERVICE);
+
+        final Tracer tracer = openTelemetry.tracerBuilder("java-eval").build();
 
         // flagd provider with telemetry option
-        final FlagdProvider flagdProvider = new FlagdProvider(FlagdOptions.builder().openTelemetry(telemetrySdk).build());
+        final FlagdProvider flagdProvider = new FlagdProvider(FlagdOptions.builder().openTelemetry(openTelemetry).build());
+
+        OpenTelemetryHook telemetryHook =
+                new OpenTelemetryHook(OpenTelemetryHookOptions.builder().setErrorStatus(true).build());
 
         OpenFeatureAPI api = OpenFeatureAPI.getInstance();
+        api.addHooks(telemetryHook);
         api.setProvider(flagdProvider);
 
         final Client client = api.getClient();
 
-        // flag evaluation
-        final Boolean boolEval = client.getBooleanValue(FLAG_KEY, false);
-        System.out.println("eval: " + boolEval);
+        Span span = tracer.spanBuilder("boolEvalLogic").startSpan();
+
+        // flag evaluation - 1
+        try(Scope ignored =  span.makeCurrent()) {
+            FlagEvaluationDetails<Boolean> details = client.getBooleanDetails(FLAG_KEY, false);
+            System.out.println("eval: " + details.getValue());
+        } finally {
+            span.end();
+        }
 
         // wait to export everything
-        Thread.sleep(5000);
+        Thread.sleep(10000);
     }
 
 

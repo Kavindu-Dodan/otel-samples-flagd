@@ -3,7 +3,7 @@ Simple Go example to demonstrate distributed traces of flagd
 ### How to run ?
 
 1. Run flagd & collector setup through `docker-compose.yaml` located at [docker](../docker)
-2. Run go application `go run main.go`
+2. Run go application: `go run .`
 
 ### Observe
 

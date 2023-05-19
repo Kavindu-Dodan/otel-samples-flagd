@@ -12,15 +12,19 @@ exporters:
     endpoint: jaeger-all-in-one:14250
     tls:
       insecure: true
+
 processors:
   batch:
 service:
   pipelines:
     traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [jaeger]
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters:
+        - jaeger
     metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [prometheus]
+      receivers: [ otlp ]
+      processors:
+        - batch
+      exporters:
+        - prometheus

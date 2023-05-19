@@ -7,6 +7,22 @@
         "off": false
       },
       "defaultVariant": "on"
+    },
+    "myBoolFlagB": {
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "myIntFlag": {
+      "state": "ENABLED",
+      "variants": {
+        "1": 1,
+        "2": 2
+      },
+      "defaultVariant": "1"
     }
   }
 }
